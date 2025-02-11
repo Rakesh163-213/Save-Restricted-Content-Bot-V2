@@ -22,21 +22,19 @@ from aiojobs import create_scheduler
 
 # ----------------------------Bot-Start---------------------------- #
 
-loop = asyncio.new_event_loop()  # Create a new event loop
-asyncio.set_event_loop(loop)  # Set it as the current event loop
+loop = asyncio.get_event_loop()
 
 # Function to schedule expiry checks
 async def schedule_expiry_check():
     scheduler = await create_scheduler()
     while True:
         await scheduler.spawn(check_and_remove_expired_users())
-        await asyncio.sleep(3600)  # Check every hour
+        await asyncio.sleep(60)  # Check every hour
         gc.collect()
 
 async def devggn_boot():
     for all_module in ALL_MODULES:
         importlib.import_module("devgagan.modules." + all_module)
-
     print("""
 ---------------------------------------------------
 📂 Bot Deployed successfully ...
@@ -54,9 +52,10 @@ async def devggn_boot():
 """)
 
     asyncio.create_task(schedule_expiry_check())
-    print("✅ Auto removal started ...")
+    print("Auto removal started ...")
     await idle()
-    print("❌ Bot stopped...")
+    print("Bot stopped...")
+
 
 if __name__ == "__main__":
     loop.run_until_complete(devggn_boot())
